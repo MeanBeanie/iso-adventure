@@ -5,4 +5,6 @@ LIBS = -L/opt/homebrew/Cellar/sfml/2.5.1_2/lib -lsfml-system -lsfml-window -lsfm
 CXXFLAGS = -o $(NAME) -std=c++20 $(INCLUDE) $(LIBS) -Wall -w
 
 make:
-	$(CC) *.cpp $(CXXFLAGS)
+	@echo "building.."
+	@$(CC) *.cpp $(CXXFLAGS)
+	@echo "compiled to $(NAME)"
