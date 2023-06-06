@@ -67,7 +67,7 @@ namespace world {
 	const int width = 100;
 	const int height = 100;
 
-	void resetTiles(int z = 0){
+	void resetTiles(int a = 0){
 		tiles.clear();
 		for(int y = 0; y < height; y++){
 			std::vector<Tile> temp;
@@ -75,7 +75,7 @@ namespace world {
 				int mapx = (x * (0.5f * TILEWIDTH) + y * (-0.5f * TILEWIDTH))+worldOffset.x;
 				int mapy = (x * (0.25f * TILEHEIGHT) + y * (0.25f * TILEHEIGHT))+worldOffset.y;
 				Tile t(mapx, mapy);
-				if(z == 1){
+				if(a == 1){
 					if(getRandomNumber(0, 100) == 27){
 						Object tree;
 						tree.sprite.setTexture(tree_right);
