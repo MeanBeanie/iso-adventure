@@ -68,6 +68,19 @@ namespace world {
 
 	class Player: public Object{
 	public:
+		enum Facing{
+			Up = 0,
+			UpLeft = 1,
+			Left = 2,
+			DownLeft = 3,
+			Down = 4,
+			DownRight = 5,
+			Right = 6,
+			UpRight = 7
+		};
+
+		Facing facing = Facing::DownLeft;
+
 		Player(int x = 0, int y = 0){
 			pos.x = x;
 			pos.y = y;
@@ -82,18 +95,49 @@ namespace world {
 			if(sf::Keyboard::isKeyPressed(sf::Keyboard::RShift)){
 				speed = 400;
 			}
-			if(sf::Keyboard::isKeyPressed(sf::Keyboard::W)){  
-				pos.y -= speed*delta;
-			}
-			if(sf::Keyboard::isKeyPressed(sf::Keyboard::S)){  
-				pos.y += speed*delta;
-			}
 			if(sf::Keyboard::isKeyPressed(sf::Keyboard::D)){  
+				facing = Facing::Right;
 				pos.x += speed*delta;
 			}
 			if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)){  
+				facing = Facing::Left;
 				pos.x -= speed*delta;
 			}
+			if(sf::Keyboard::isKeyPressed(sf::Keyboard::W)){
+				if(sf::Keyboard::isKeyPressed(sf::Keyboard::D)){
+					facing = Facing::UpRight;
+				}
+				else if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)){
+					facing = Facing::UpLeft;
+				}
+				else{
+					facing = Facing::Up;
+				}
+				pos.y -= speed*delta;
+			}
+			if(sf::Keyboard::isKeyPressed(sf::Keyboard::S)){  
+				if(sf::Keyboard::isKeyPressed(sf::Keyboard::D)){
+					facing = Facing::DownRight;
+				}
+				else if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)){
+					facing = Facing::DownLeft;
+				}
+				else{
+					facing = Facing::Down;
+				}
+				pos.y += speed*delta;
+			}	
+
+			switch(facing){
+				case 0:{pRect.left = 32; pRect.top = 16; sprite.setTextureRect(pRect); break;}
+				case 1:{pRect.left = 0; pRect.top = 32; sprite.setTextureRect(pRect); break;}
+				case 2:{pRect.left = 32; pRect.top = 16; sprite.setTextureRect(pRect); break;}
+				case 3:{pRect.left = 0; pRect.top = 0; sprite.setTextureRect(pRect); break;}
+				case 4:{pRect.left = 32; pRect.top = 0; sprite.setTextureRect(pRect); break;}
+				case 5:{pRect.left = 0; pRect.top = 16; sprite.setTextureRect(pRect); break;}
+				case 6:{pRect.left = 32; pRect.top = 16; sprite.setTextureRect(pRect); break;}
+				case 7:{pRect.left = 0; pRect.top = 32; sprite.setTextureRect(pRect); break;}
+			};
 
 			if(pos.x < 0){
 				worldOffset.x += 16;
