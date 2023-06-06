@@ -47,10 +47,13 @@ int main(){
 		for(int y = 0; y < world::height; y++){
 			for(int x = 0; x < world::width; x++){
 				sf::Vector2f tPos = world::tiles[y][x].sprite.getPosition();
-				if(tPos.x+16 > 0 && tPos.x < 800 && tPos.y > 0 && tPos.y < 450){
+				if(tPos.x+16 > 0 && tPos.x < 800 && tPos.y+16 > 0 && tPos.y < 450){
 					window.draw(world::tiles[y][x].sprite);
 				}
 			}
+		}
+		for(world::Object obj : world::trees){
+			window.draw(obj.sprite);
 		}
 		window.draw(player.sprite);
     window.display();

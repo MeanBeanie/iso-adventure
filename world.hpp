@@ -6,9 +6,20 @@
 #include <SFML/Graphics.hpp>
 #include <ctime>
 #include <cmath>
+#include <random>
 
 #define TILEWIDTH 32
 #define TILEHEIGHT 32
+
+// from chat gpt
+int getRandomNumber(int min, int max) {
+    std::random_device rd;  // Create a random device to obtain a seed
+    std::mt19937 engine(rd());  // Initialize the Mersenne Twister random number generator
+
+    std::uniform_int_distribution<int> distribution(min, max);  // Create a uniform distribution
+
+    return distribution(engine);  // Generate a random number within the specified range
+}
 
 namespace world {
 	sf::Texture tile_right;
@@ -52,14 +63,32 @@ namespace world {
 	};
 	
 	std::vector< std::vector<Tile> > tiles;
+	std::vector<Object> trees;
 	const int width = 100;
 	const int height = 100;
 
-	void shiftWorld(int x, int y){
-		for(int j = 0; j < tiles.size(); j++){
-			for(int i = 0; i < tiles.at(j).size(); i++){
-				tiles.at(j).at(i).changePos(x, y);
+	void resetTiles(int z = 0){
+		tiles.clear();
+		for(int y = 0; y < height; y++){
+			std::vector<Tile> temp;
+			for(int x = 0; x < width; x++){
+				int mapx = (x * (0.5f * TILEWIDTH) + y * (-0.5f * TILEWIDTH))+worldOffset.x;
+				int mapy = (x * (0.25f * TILEHEIGHT) + y * (0.25f * TILEHEIGHT))+worldOffset.y;
+				Tile t(mapx, mapy);
+				if(z == 1){
+					if(getRandomNumber(0, 100) == 27){
+						Object tree;
+						tree.sprite.setTexture(tree_right);
+						tree.pos.x = mapx;
+						tree.pos.y = mapy+16;
+						tree.sprite.setPosition(mapx, mapy+16);
+						tree.sprite.setScale(2.5f, 2.5f);
+						trees.push_back(tree);
+					}
+				}
+				temp.push_back(t);
 			}
+			tiles.push_back(temp);
 		}
 	}
 
@@ -139,65 +168,25 @@ namespace world {
 				case 7:{pRect.left = 0; pRect.top = 32; sprite.setTextureRect(pRect); break;}
 			};
 
-			if(pos.x < 0){
+			if(pos.x < 0){ 
 				worldOffset.x += 16;
-				pos.x += 16;
-				tiles.clear();
-				for(int y = 0; y < height; y++){
-					std::vector<Tile> temp;
-					for(int x = 0; x < width; x++){
-						int mapx = (x * (0.5f * TILEWIDTH) + y * (-0.5f * TILEWIDTH))+worldOffset.x;
-						int mapy = (x * (0.25f * TILEHEIGHT) + y * (0.25f * TILEHEIGHT))+worldOffset.y;
-						Tile t(mapx, mapy);
-						temp.push_back(t);
-					}
-					tiles.push_back(temp);
-				}
+				pos.x += 16;    
+				resetTiles();
 			}
 			if(pos.x+32 > 800){
 				worldOffset.x -= 16;
-				pos.x -= 16;
-				tiles.clear();
-				for(int y = 0; y < height; y++){
-					std::vector<Tile> temp;
-					for(int x = 0; x < width; x++){
-						int mapx = (x * (0.5f * TILEWIDTH) + y * (-0.5f * TILEWIDTH))+worldOffset.x;
-						int mapy = (x * (0.25f * TILEHEIGHT) + y * (0.25f * TILEHEIGHT))+worldOffset.y;
-						Tile t(mapx, mapy);
-						temp.push_back(t);
-					}
-					tiles.push_back(temp);
-				}
+				pos.x -= 16;    
+				resetTiles();	
 			}
 			if(pos.y < 0){
 				worldOffset.y += 16;
 				pos.y += 16;
-				tiles.clear();
-				for(int y = 0; y < height; y++){
-					std::vector<Tile> temp;
-					for(int x = 0; x < width; x++){
-						int mapx = (x * (0.5f * TILEWIDTH) + y * (-0.5f * TILEWIDTH))+worldOffset.x;
-						int mapy = (x * (0.25f * TILEHEIGHT) + y * (0.25f * TILEHEIGHT))+worldOffset.y;
-						Tile t(mapx, mapy);
-						temp.push_back(t);
-					}
-					tiles.push_back(temp);
-				}
+				resetTiles();	
 			}
 			if(pos.y+32 > 450){
 				worldOffset.y -= 16;
-				pos.y -= 16;
-				tiles.clear();
-				for(int y = 0; y < height; y++){
-					std::vector<Tile> temp;
-					for(int x = 0; x < width; x++){
-						int mapx = (x * (0.5f * TILEWIDTH) + y * (-0.5f * TILEWIDTH))+worldOffset.x;
-						int mapy = (x * (0.25f * TILEHEIGHT) + y * (0.25f * TILEHEIGHT))+worldOffset.y;
-						Tile t(mapx, mapy);
-						temp.push_back(t);
-					}
-					tiles.push_back(temp);
-				}
+				pos.y -= 16;    
+				resetTiles();	
 			}
 
 			sprite.setPosition(pos.x, pos.y);
@@ -220,16 +209,7 @@ namespace world {
 		tree_left.loadFromFile("sprites/tree-left.png");
 		tree_right.loadFromFile("sprites/tree-right.png");
 
-		for(int y = 0; y < height; y++){
-			std::vector<Tile> temp;
-			for(int x = 0; x < width; x++){
-				int mapx = (x * (0.5f * TILEWIDTH) + y * (-0.5f * TILEWIDTH))+worldOffset.x;
-				int mapy = (x * (0.25f * TILEHEIGHT) + y * (0.25f * TILEHEIGHT))+worldOffset.y;
-				Tile t(mapx, mapy);
-				temp.push_back(t);
-			}
-			tiles.push_back(temp);
-		}
+		resetTiles(1);	
 	}
 	
 	// perspective is based on light direction, left means light source
