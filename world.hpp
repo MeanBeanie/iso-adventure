@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <ctime>
 #include <SFML/Graphics.hpp>
 #include "PerlinNoise.hpp" // https://github.com/Reputeless/PerlinNoise
 
@@ -14,6 +15,9 @@ namespace world {
 	sf::IntRect pRect;
 	
 	sf::Texture tree;
+
+	time_t curTime;
+	time_t lastRot;
 
 	float scale = 2.0f;
 	int width = 30;
@@ -36,7 +40,13 @@ namespace world {
     }
 	}
 
+	void update(){
+		time(&curTime);
+	}
+
 	void init(){
+		time(&curTime);
+		lastRot = curTime - 9;
 		if(!tile.loadFromFile("sprites/tile.png")){
 			std::cout << "grass tile texture [X]\n";
 		}

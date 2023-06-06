@@ -13,6 +13,8 @@ int main(){
 		delta = dClock.getElapsedTime().asSeconds();
 		dClock.restart();
     
+		world::update();
+
 		sf::Event event;
     while(window.pollEvent(event)){
       switch(event.type){
