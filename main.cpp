@@ -7,14 +7,11 @@ int main(){
 
 	world::init();
 
-	world::Player player(100, 100);
-
 	sf::Clock dClock;
 	float delta;
   while(window.isOpen()){
 		delta = dClock.getElapsedTime().asSeconds();
 		dClock.restart();
-		time(&world::curTime);
     
 		sf::Event event;
     while(window.pollEvent(event)){
@@ -22,40 +19,15 @@ int main(){
         case sf::Event::Closed: window.close(); break;
       }
     }
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left)){
-			int newPer = world::perspective;
-			newPer++;
-			if(newPer > world::Perspective::Front){
-				newPer = world::Perspective::Left;
-			}
-			world::switchPerspective(newPer);
-			continue;
-		}
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right)){
-			int newPer = world::perspective;
-			newPer--;
-			if(newPer < 0){
-				newPer = world::Perspective::Front;
-			}
-			world::switchPerspective(newPer);
-			continue;
-		}
-
-		player.move(delta);
 
     window.clear(sf::Color(92, 147, 147, 255));
-		for(int y = 0; y < world::height; y++){
-			for(int x = 0; x < world::width; x++){
-				sf::Vector2f tPos = world::tiles[y][x].sprite.getPosition();
-				if(tPos.x+16 > 0 && tPos.x < 800 && tPos.y+16 > 0 && tPos.y < 450){
-					window.draw(world::tiles[y][x].sprite);
+		for(std::vector<sf::Sprite> sprites : world::ground){
+			for(sf::Sprite s : sprites){
+				if(s.getPosition().x+16 > 0 && s.getPosition().x < 800 && s.getPosition().y+16 > 0 && s.getPosition().y < 450){
+					window.draw(s);
 				}
 			}
 		}
-		for(world::Object obj : world::trees){
-			window.draw(obj.sprite);
-		}
-		window.draw(player.sprite);
     window.display();
   }
 
